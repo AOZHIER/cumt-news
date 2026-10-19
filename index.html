@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="矿大资讯">
+<title>中国矿业大学 · 校园资讯</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#0d1117; --bg2:#0a0e13; --card:#161c24; --card2:#1b232d;
+  --line:#242d39; --text:#e8eef6; --mut:#8b9bad; --mut2:#6b7a8c;
+  --accent:#4f8cff; --hot:#ff7a59; --star:#ffc857; --ok:#3ecf8e; --warn:#ff5d5d;
+  --radius:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(1200px 600px at 50% -200px,#16202c 0%,var(--bg) 55%,var(--bg2) 100%);
+  color:var(--text); font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  padding:0 14px 60px; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto}
+header{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);
+  background:rgba(13,17,23,.82);border-bottom:1px solid var(--line);margin:0 -14px;padding:14px 14px 10px}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand h1{font-size:19px;margin:0;letter-spacing:.3px;font-weight:650}
+.brand .sub{color:var(--mut2);font-size:12px}
+.stats{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;font-size:12.5px;color:var(--mut)}
+.stats b{color:var(--text);font-weight:600;font-size:14px}
+.stats .h{color:var(--hot)}
+.stats .u{color:var(--warn)}
+.search{margin-top:10px;position:relative}
+.search input{width:100%;padding:11px 14px 11px 38px;border-radius:11px;border:1px solid var(--line);
+  background:var(--card);color:var(--text);font-size:14.5px;outline:none}
+.search input:focus{border-color:#38506e;box-shadow:0 0 0 3px rgba(79,140,255,.12)}
+.search svg{position:absolute;left:13px;top:12px;width:16px;height:16px;fill:var(--mut2)}
+.chips{display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:6px 13px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--mut);font-size:13px;cursor:pointer;white-space:nowrap;transition:.15s}
+.chip:hover{color:var(--text);border-color:#38506e}
+.chip.on{background:rgba(79,140,255,.16);border-color:#3d6ab8;color:#cfe0ff}
+.chip.on.hot{background:rgba(255,122,89,.16);border-color:#a8503a;color:#ffcbbc}
+.chip b{font-weight:600;opacity:.75;margin-left:4px;font-size:11.5px}
+
+.alert-strip{margin:16px 0 6px}
+.alert-strip .t{font-size:12.5px;color:var(--warn);letter-spacing:.4px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.alert-strip .t:before{content:"";width:3px;height:13px;background:var(--warn);border-radius:2px}
+.alert-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.alert-row::-webkit-scrollbar{display:none}
+.alert-card{flex:0 0 220px;background:linear-gradient(180deg,rgba(255,122,89,.1),var(--card));
+  border:1px solid #4a2f28;border-radius:12px;padding:11px 12px;cursor:pointer}
+.alert-card .tt{font-size:13.5px;font-weight:600;line-height:1.4;margin-bottom:6px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.alert-card .dl{font-size:12px;color:var(--hot)}
+
+.list{margin-top:14px;display:flex;flex-direction:column;gap:12px}
+.sec{display:flex;align-items:center;gap:10px;margin-top:22px;padding-left:11px;
+  border-left:3px solid var(--accent)}
+.sec span{font-size:14px;font-weight:600;letter-spacing:0}
+.sec i{font-style:normal;color:var(--mut2);font-size:12px}
+.card{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:14px;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent}
+.card.hot{border-color:#3a2b26}
+.card.hot:before{background:linear-gradient(180deg,var(--hot),#b34a2f)}
+.card .rank{flex:0 0 34px;color:var(--mut2);font:600 20px/1.1 ui-monospace,Menlo,Consolas,monospace;
+  text-align:right;padding-top:2px}
+.card .main{min-width:0;flex:1}
+.card .stars{color:var(--star);font-size:12.5px;letter-spacing:1px;margin-bottom:4px}
+.card .stars .lv{color:var(--mut2);letter-spacing:0;margin-left:6px;font-size:11.5px}
+.card h2{font-size:15.5px;line-height:1.45;margin:0 0 8px;font-weight:650;letter-spacing:.2px}
+.card h2 a{color:inherit;text-decoration:none}
+.card.hot h2 a:hover{color:#ffb199}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);color:var(--mut)}
+.tag.hot{color:#ffb199;border-color:#5a342a;background:rgba(255,122,89,.12)}
+.tag.talk{color:#a7c8ff;border-color:#2f4a72;background:rgba(79,140,255,.1)}
+.tag.res{color:#9de3c3;border-color:#2a5443;background:rgba(62,207,142,.1)}
+.tag.info{color:#d9c9ff;border-color:#453a68;background:rgba(160,130,255,.1)}
+.tag.gov{color:#ffd89b;border-color:#5a4a28;background:rgba(255,200,87,.1)}
+.tag.intl{color:#9fd8ff;border-color:#2b4b60;background:rgba(120,200,255,.1)}
+.tag.new{color:#0d1117;background:var(--ok);border-color:transparent;font-weight:700}
+.tag.due{color:#fff;background:var(--warn);border-color:transparent;font-weight:700}
+.tag.due.soon{background:#8a5a1a}
+
+.meta{display:grid;grid-template-columns:1fr;gap:4px;margin-bottom:10px;
+  border-left:2px solid var(--line);padding-left:10px}
+.meta .m{display:flex;gap:8px;font-size:13px;align-items:baseline}
+.meta .k{flex:0 0 34px;color:var(--mut2);font-size:12px}
+.meta .v{color:#cdd9e6;min-width:0;word-break:break-all}
+.meta .v.none{color:var(--mut2);font-style:italic}
+.meta .v.urgent{color:var(--warn);font-weight:600}
+.meta .v.soon{color:var(--hot)}
+.meta .v.closed{color:var(--mut2);text-decoration:line-through}
+
+.sum{color:#b9c6d4;font-size:13.5px;margin:0 0 8px;line-height:1.65;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.card.open .sum{-webkit-line-clamp:unset;display:block}
+.points{margin:0 0 8px;padding-left:16px;color:#a9b8c8;font-size:13px}
+.points li{margin-bottom:4px}
+.foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--mut2);margin-top:6px}
+.foot .src{padding:1px 7px;border-radius:5px;background:var(--card2);color:var(--mut)}
+.foot .link{margin-left:auto;color:var(--accent);text-decoration:none;font-weight:600}
+.foot .link:hover{text-decoration:underline}
+.empty{text-align:center;color:var(--mut);padding:60px 20px}
+.empty code{background:var(--card);padding:2px 7px;border-radius:5px;color:#cfe0ff}
+footer{margin:34px 0 0;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--mut2);font-size:12px;line-height:1.8}
+footer b{color:var(--mut)}
+.hidden{display:none !important}
+@media(min-width:660px){
+  .meta{grid-template-columns:1fr 1fr;column-gap:18px}
+  .card{padding:18px;gap:16px}
+  .card h2{font-size:16.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">
+    <h1>中国矿业大学 · 校园资讯</h1>
+    <span class="sub">按重要度排序 · 最近 60 天</span>
+  </div>
+  <div class="stats">
+    <span><b>30</b> 条资讯</span>
+    <span class="h"><b>10</b> 条竞赛 / 报名</span>
+    <span class="u"><b>3</b> 条报名临近</span>
+    <span>更新 <b>2026-10-19 21:48</b></span>
+  </div>
+  <div class="search">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+    <input id="q" type="search" placeholder="搜标题 / 摘要 / 地点，例如「竞赛」「报名截止」" autocomplete="off">
+  </div>
+  <div class="chips">
+    <button class="chip on" data-tag="all">全部<b>30</b></button>
+    <button class="chip hot" data-tag="focus">重点关注<b>10</b></button>
+    <button class="chip hot" data-tag="竞赛">竞赛<b>6</b></button><button class="chip hot" data-tag="报名">报名<b>6</b></button><button class="chip" data-tag="讲座">讲座<b>2</b></button><button class="chip" data-tag="通知">通知<b>13</b></button><button class="chip" data-tag="科研">科研<b>13</b></button><button class="chip" data-tag="校务">校务<b>14</b></button><button class="chip" data-tag="国际">国际<b>15</b></button>
+  </div>
+</header>
+
+<div class="alert-strip"><div class="t">报名 / 截止提醒</div><div class="alert-row"><div class="alert-card" data-goto="c1"><div class="tt">关于举办中国矿业大学第十四届大学生物理学术竞赛暨2027江苏省大学生物理学术竞赛选拔赛的通知</div><div class="dl">2026年11月15日 · 还剩 27 天</div></div><div class="alert-card" data-goto="c4"><div class="tt">关于开展本科生高水平创新成果替代毕业设计（论文）工作试点的通知</div><div class="dl">11月15日中午12点 · 还剩 27 天</div></div><div class="alert-card" data-goto="c7"><div class="tt">关于开展2026年省级大学生企业实习实训基地申报校内答辩工作的通知</div><div class="dl">10月19日上午10点 · 今天截止</div></div></div></div>
+
+<div class="sec"><span>全部资讯</span><i>按重要度排序 · 点摘要可展开全文</i></div>
+<div class="list" id="list">
+<article class="card hot" id="c1" data-tags="竞赛 报名 通知 国际" data-hot="1" data-text="关于举办中国矿业大学第十四届大学生物理学术竞赛暨2027江苏省大学生物理学术竞赛选拔赛的通知 中国大学生物理学术竞赛是由大学组织实施、大学生参与的一项以团队对抗为形式的物理竞赛，旨在：(1) 针对实际物理问题给出解决方案，锻炼学生解决复杂科学问题的能力；(2) 培养学生应用物理学的基础知识、技术以及物理实验的研究方法解决与日常生活相关的一些实际问题的能力；(3) 培养学生研究性学习的能力；(4) 培养团队意识和… 理科楼a519 竞赛 报名 通知 国际 教务部·学生">
+  <div class="rank">01</div>
+  <div class="main">
+    <div class="stars">★★★★★<span class="lv">最高</span></div>
+    <h2><a href="https://smsp.cumt.edu.cn/a1/5d/c18894a696669/page.htm" target="_blank" rel="noopener noreferrer">关于举办中国矿业大学第十四届大学生物理学术竞赛暨2027江苏省大学生物理学术竞赛选拔赛的通知</a></h2>
+    <div class="badges"><span class="tag due soon">即将截止</span><span class="tag hot">竞赛</span><span class="tag hot">报名</span><span class="tag info">通知</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2027年3月至4月</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">理科楼A519</span></div>
+      <div class="m"><span class="k">截止</span><span class="v soon">2026年11月15日</span></div>
+    </div>
+    <p class="sum">中国大学生物理学术竞赛是由大学组织实施、大学生参与的一项以团队对抗为形式的物理竞赛，旨在：(1) 针对实际物理问题给出解决方案，锻炼学生解决复杂科学问题的能力；(2) 培养学生应用物理学的基础知识、技术以及物理实验的研究方法解决与日常生活相关的一些实际问题的能力；(3) 培养学生研究性学习的能力；(4) 培养团队意识和…</p>
+    <ul class="points"><li>我校将于2027年3-4月举行中国矿业大学第十四届大学生物理学术竞赛暨2027江苏省大学生物理学术竞赛选拔赛。</li><li>报名截止时间：2026年11月15日。</li></ul>
+    <div class="foot">
+      <span class="src">教务部·学生</span>
+      <span>2026-10-12</span>
+      <a class="link" href="https://smsp.cumt.edu.cn/a1/5d/c18894a696669/page.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c2" data-tags="竞赛 科研" data-hot="1" data-text="我校荣获第八届全国科学实验展演汇演一等奖 10月12日至15日，由科技日报社主办、中国科学院武汉植物园承办、湖北省科学技术厅协办的第八届全国科学实验展演汇演在武汉举办。 武汉 竞赛 科研 资讯矿大">
+  <div class="rank">02</div>
+  <div class="main">
+    <div class="stars">★★★★★<span class="lv">最高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1002/74011.htm" target="_blank" rel="noopener noreferrer">我校荣获第八届全国科学实验展演汇演一等奖</a></h2>
+    <div class="badges"><span class="tag hot">竞赛</span><span class="tag res">科研</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月12日至15日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">武汉</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月12日至15日，由科技日报社主办、中国科学院武汉植物园承办、湖北省科学技术厅协办的第八届全国科学实验展演汇演在武汉举办。</p>
+    <ul class="points"><li>我校作品《钙钛矿量子点·点亮色彩未来》从全国59个推荐单位的168支代表队中脱颖而出，荣获一等奖。</li><li>该作品以“魔法学院考核”“晶体炼制”“彩屏显色”“中国制造”四幕层层展开，由浅入深地讲述了科研探索的艰辛与荣光，在江苏省科技厅组织的省级选拔中以第一名的成绩晋级国赛。</li></ul>
+    <div class="foot">
+      <span class="src">资讯矿大</span>
+      <span>2026-10-16</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1002/74011.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c3" data-tags="竞赛 科研 校务" data-hot="1" data-text="学校举办纪念中国工农红军长征胜利90周年“回响 启航”音乐思... 10月18日晚，学校在明德礼堂举办纪念中国工农红军长征胜利90周年“回响 启航”音乐思政课暨合唱比赛。 明德礼堂 竞赛 科研 校务 资讯矿大">
+  <div class="rank">03</div>
+  <div class="main">
+    <div class="stars">★★★★☆<span class="lv">很高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1002/74022.htm" target="_blank" rel="noopener noreferrer">学校举办纪念中国工农红军长征胜利90周年“回响 启航”音乐思...</a></h2>
+    <div class="badges"><span class="tag hot">竞赛</span><span class="tag res">科研</span><span class="tag gov">校务</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月18日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">明德礼堂</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月18日晚，学校在明德礼堂举办纪念中国工农红军长征胜利90周年“回响 启航”音乐思政课暨合唱比赛。</p>
+    <ul class="points"><li>由各学院2000余名学生组成的19支参赛队伍精神抖擞、满怀赤诚，以《告别》《突破封锁线》《遵义会议放光辉》《四渡赤水出奇兵》《飞越大渡河》《过雪山草地》《到吴起镇》《祝捷》《报喜》《大会师》等十首经典曲目，完整演绎了《长征组歌》的经典篇…</li><li>经过激烈角逐，人文与艺术学院、化工学院、经济管理学院3支队伍获得一等奖，资源与地球科学学院等6支队伍获得二等奖，公共管理学院等10支队伍获得三等奖。</li></ul>
+    <div class="foot">
+      <span class="src">资讯矿大</span>
+      <span>2026-10-19</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1002/74022.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c4" data-tags="竞赛 通知 科研 国际" data-hot="1" data-text="关于开展本科生高水平创新成果替代毕业设计（论文）工作试点的通知 为持续深化本科实践教学改革，健全多元化毕业考核评价机制，打通科研创新、学科竞赛与毕业设计（论文）育人衔接通道，充分激励本科生深耕高水平科研实践与创新创业活动，突出学生创新能力、实践能力与综合素养评价导向，结合我校人才培养实际，现决定开展本科生高水平创新成果替代毕业设计（论文）试点工作，有关事项通知如下：  竞赛 通知 科研 国际 教务部通知">
+  <div class="rank">04</div>
+  <div class="main">
+    <div class="stars">★★★★☆<span class="lv">很高</span></div>
+    <h2><a href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1105&amp;wbnewsid=8546" target="_blank" rel="noopener noreferrer">关于开展本科生高水平创新成果替代毕业设计（论文）工作试点的通知</a></h2>
+    <div class="badges"><span class="tag due soon">即将截止</span><span class="tag hot">竞赛</span><span class="tag info">通知</span><span class="tag res">科研</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v soon">11月15日中午12点</span></div>
+    </div>
+    <p class="sum">为持续深化本科实践教学改革，健全多元化毕业考核评价机制，打通科研创新、学科竞赛与毕业设计（论文）育人衔接通道，充分激励本科生深耕高水平科研实践与创新创业活动，突出学生创新能力、实践能力与综合素养评价导向，结合我校人才培养实际，现决定开展本科生高水平创新成果替代毕业设计（论文）试点工作，有关事项通知如下：</p>
+    <ul class="points"><li>3.高水平学科竞赛成果：学生排名前三，代表我校参加学校认定的一级甲等、一级乙等竞赛，并获得一级甲等竞赛第一或第二等次奖项，一级乙等竞赛第一等次奖项。</li><li>学生同步提交成果原件（包括论文原文及收录证明、专利授权证书、竞赛获奖证书、项目结题证明等佐证资料）。</li></ul>
+    <div class="foot">
+      <span class="src">教务部通知</span>
+      <span>2026-10-12</span>
+      <a class="link" href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1105&amp;wbnewsid=8546" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c5" data-tags="竞赛 报名 通知" data-hot="1" data-text="关于组织参加第八届江苏省智能（虚拟）仪器竞赛暨创新实践研讨会的通知 为引导高校加强仪器类专业和课程的建设，促进教学改革，培养大学生的创新能力和协作精神，提高学生针对实际问题进行智能（虚拟）仪器设计与开发的综合能力。  竞赛 报名 通知 教务部·学生">
+  <div class="rank">05</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="http://jwb.cumt.edu.cn/info/1102/8522.htm" target="_blank" rel="noopener noreferrer">关于组织参加第八届江苏省智能（虚拟）仪器竞赛暨创新实践研讨会的通知</a></h2>
+    <div class="badges"><span class="tag hot">竞赛</span><span class="tag hot">报名</span><span class="tag info">通知</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v closed">2026年9月30日</span></div>
+    </div>
+    <p class="sum">为引导高校加强仪器类专业和课程的建设，促进教学改革，培养大学生的创新能力和协作精神，提高学生针对实际问题进行智能（虚拟）仪器设计与开发的综合能力。</p>
+    <ul class="points"><li>现就第八届江苏省智能（虚拟）仪器竞赛暨创新实践研讨会报名组织工作有关事项通知如下：</li><li>1.报名时间：2026年9月30日截止。</li></ul>
+    <div class="foot">
+      <span class="src">教务部·学生</span>
+      <span>2026-09-15</span>
+      <a class="link" href="http://jwb.cumt.edu.cn/info/1102/8522.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c6" data-tags="讲座 科研 校务 国际" data-hot="0" data-text="我校举办第三届安全科学与工程学科发展论坛暨国家自然科学基... 10月14日至15日，由国务院学位委员会第九届学科评议组（安全科学与工程组）主办，国家自然科学基金委员会工程与材料科学部支持，我校承办的第三届安全科学与工程学科发展论坛暨国家自然科学基金安全类项目进展交流会在徐州举行。 徐州 讲座 科研 校务 国际 要闻矿大">
+  <div class="rank">06</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1081/74016.htm" target="_blank" rel="noopener noreferrer">我校举办第三届安全科学与工程学科发展论坛暨国家自然科学基...</a></h2>
+    <div class="badges"><span class="tag talk">讲座</span><span class="tag res">科研</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月14日至15日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">徐州</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月14日至15日，由国务院学位委员会第九届学科评议组（安全科学与工程组）主办，国家自然科学基金委员会工程与材料科学部支持，我校承办的第三届安全科学与工程学科发展论坛暨国家自然科学基金安全类项目进展交流会在徐州举行。</p>
+    <ul class="points"><li>他表示，学校将以此次会议为契机，持续做强做优安全学科，深耕基础研究，强化科研创新，培育优秀人才，主动深化与各界的交流合作，携手推动我国安全科学与工程学科高质量发展，为保障国家能源安全、培育新质生产力、服务经济社会高质量发展贡献更大力量。</li><li>会议期间，还召开了国务院学位委员会第八届和第九届学科评议组（安全科学与工程组）交流会，并举行第三届全国高校安全领域优秀青年科技人才奖及提名奖颁奖仪式。</li></ul>
+    <div class="foot">
+      <span class="src">要闻矿大</span>
+      <span>2026-10-17</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1081/74016.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c7" data-tags="报名 通知 科研" data-hot="1" data-text="关于开展2026年省级大学生企业实习实训基地申报校内答辩工作的通知 根据《省教育厅省工业和信息化厅关于做好2026 年省级大学生企业实习实训基地申报的通知》文件精神，我校限推荐上报3项省级大学生企业实习实训基地。 行健楼b203 报名 通知 科研 教务部通知">
+  <div class="rank">07</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1105&amp;wbnewsid=8550" target="_blank" rel="noopener noreferrer">关于开展2026年省级大学生企业实习实训基地申报校内答辩工作的通知</a></h2>
+    <div class="badges"><span class="tag due">报名临近</span><span class="tag hot">报名</span><span class="tag info">通知</span><span class="tag res">科研</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">行健楼B203</span></div>
+      <div class="m"><span class="k">截止</span><span class="v urgent">10月19日上午10点</span></div>
+    </div>
+    <p class="sum">根据《省教育厅省工业和信息化厅关于做好2026 年省级大学生企业实习实训基地申报的通知》文件精神，我校限推荐上报3项省级大学生企业实习实训基地。</p>
+    <ul class="points"><li>1.时间：10月19日下午2点。</li><li>2.地点：行健楼B203。</li></ul>
+    <div class="foot">
+      <span class="src">教务部通知</span>
+      <span>2026-10-16</span>
+      <a class="link" href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1105&amp;wbnewsid=8550" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c8" data-tags="科研 校务 国际" data-hot="0" data-text="校党委书记赵宏伟率团访问瑞典 为深入拓展我校对北欧国家的国际交流与合作，10月14日至16日，校党委书记赵宏伟率团访问瑞典，先后到访瑞典皇家理工学院、星源材质（欧洲）有限责任公司（以下简称“欧洲星源公司”），并拜会中国驻瑞典大使馆，推动学校与瑞典在科技创新、科教融汇、产教融合等方面合作走深走实，为建设能源资源特色世界一流大学注入国际合作新动能。 深圳 科研 校务 国际 要闻矿大">
+  <div class="rank">08</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1081/74025.htm" target="_blank" rel="noopener noreferrer">校党委书记赵宏伟率团访问瑞典</a></h2>
+    <div class="badges"><span class="tag res">科研</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月14日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">深圳</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">为深入拓展我校对北欧国家的国际交流与合作，10月14日至16日，校党委书记赵宏伟率团访问瑞典，先后到访瑞典皇家理工学院、星源材质（欧洲）有限责任公司（以下简称“欧洲星源公司”），并拜会中国驻瑞典大使馆，推动学校与瑞典在科技创新、科教融汇、产教融合等方面合作走深走实，为建设能源资源特色世界一流大学注入国际合作新动能。</p>
+    <ul class="points"><li>10月14日上午，代表团访问瑞典皇家理工学院，与该校常务副校长米卡埃尔·林德斯特伦举行工作会谈。</li><li>赵宏伟表示，今年7月，中瑞两国外长举行会谈，重点聚焦科技创新、绿色转型、循环经济等新兴领域深化战略合作，推动开展更多人文交流。</li></ul>
+    <div class="foot">
+      <span class="src">要闻矿大</span>
+      <span>2026-10-19</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1081/74025.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c9" data-tags="竞赛 通知 国际" data-hot="1" data-text="关于公布中国国际大学生创新大赛（2026）省赛推荐项目名单的通知 根据《关于举办中国国际大学生创新大赛（2026）校赛初赛的预通知》（教务通知〔2026〕41号）和《关于举办中国国际大学生创新大赛（2026）校赛的补充通知》（教务通知〔2026〕113号）要求，经个人申报、学校资格审核、网评专家审议、校赛决赛等环节，综合历次评审结果、网评材料准备情况及专家意见，学校遴选确定了27个项…  竞赛 通知 国际 教务部通知">
+  <div class="rank">09</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1105&amp;wbnewsid=8504" target="_blank" rel="noopener noreferrer">关于公布中国国际大学生创新大赛（2026）省赛推荐项目名单的通知</a></h2>
+    <div class="badges"><span class="tag hot">竞赛</span><span class="tag info">通知</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">根据《关于举办中国国际大学生创新大赛（2026）校赛初赛的预通知》（教务通知〔2026〕41号）和《关于举办中国国际大学生创新大赛（2026）校赛的补充通知》（教务通知〔2026〕113号）要求，经个人申报、学校资格审核、网评专家审议、校赛决赛等环节，综合历次评审结果、网评材料准备情况及专家意见，学校遴选确定了27个项…</p>
+    <ul class="points"><li>其中，高教主赛道15项（本科生创意组5项，研究生创意组4项，研究生创业组1项，本科生创业组5项；“青年红色筑梦之旅”赛道6项（公益组2项，创意组3项，创业组1项）；产业赛道6项（产教协同创新组6项）。</li><li>现将推荐项目名单予以公布，详见附件（排名不分先后）。</li></ul>
+    <div class="foot">
+      <span class="src">教务部通知</span>
+      <span>2026-09-03</span>
+      <a class="link" href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1105&amp;wbnewsid=8504" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c10" data-tags="通知 科研" data-hot="0" data-text="关于我校第十九届全国大学生创新年会推荐项目评审结果的公示 根据《教育部高等教育司关于做好第十九届全国大学生创新年会准备工作的通知》和《关于做好2026年上半年各级“大学生创新训练计划”项目中期检查和结题验收的通知》（教务通知〔2026〕25号）要求，经个人申报、学院推荐、学校资格审核、网评专家审议等环节，学校遴选确定了7个项目推荐参加第十九届全国大学生创新年会。  通知 科研 教务部·学生">
+  <div class="rank">10</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1102&amp;wbnewsid=8548" target="_blank" rel="noopener noreferrer">关于我校第十九届全国大学生创新年会推荐项目评审结果的公示</a></h2>
+    <div class="badges"><span class="tag info">通知</span><span class="tag res">科研</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月15日至10月17日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">根据《教育部高等教育司关于做好第十九届全国大学生创新年会准备工作的通知》和《关于做好2026年上半年各级“大学生创新训练计划”项目中期检查和结题验收的通知》（教务通知〔2026〕25号）要求，经个人申报、学院推荐、学校资格审核、网评专家审议等环节，学校遴选确定了7个项目推荐参加第十九届全国大学生创新年会。</p>
+    <ul class="points"><li>其中，学术论文3篇，改革成果3项，创业推介项目1项。</li><li>现将评审结果予以公示，详见附件。</li></ul>
+    <div class="foot">
+      <span class="src">教务部·学生</span>
+      <span>2026-10-15</span>
+      <a class="link" href="http://jwb.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1102&amp;wbnewsid=8548" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c11" data-tags="科研 校务" data-hot="0" data-text="我校召开国家重大科研仪器研制项目（部门推荐）“深地工程多... 10月16日，我校召开国家重大科研仪器研制项目（部门推荐）“深地工程多场耦合动力灾变试验仪”项目进展推进会议。 徐州 科研 校务 要闻矿大">
+  <div class="rank">11</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1081/74024.htm" target="_blank" rel="noopener noreferrer">我校召开国家重大科研仪器研制项目（部门推荐）“深地工程多...</a></h2>
+    <div class="badges"><span class="tag res">科研</span><span class="tag gov">校务</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月16日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">徐州</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月16日，我校召开国家重大科研仪器研制项目（部门推荐）“深地工程多场耦合动力灾变试验仪”项目进展推进会议。</p>
+    <ul class="points"><li>我校校长张吉雄，国家自然科学基金委员会（以下简称“基金委”）工程与材料科学部相关管理工作人员出席会议。</li><li>专家组肯定项目阶段性进展，希望项目承担单位及研发人员要按照基金委要求，对照任务书目标和进度安排，加强协同，规范经费使用与档案管理，确保高质量完成研制任务，并就后续仪器集成联调、关键指标实现及应用示范等方面提出意见建议。</li></ul>
+    <div class="foot">
+      <span class="src">要闻矿大</span>
+      <span>2026-10-18</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1081/74024.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c12" data-tags="通知" data-hot="0" data-text="关于召开中国矿业大学第十七届大学生体育大会暨第十九届大学生体育文化节闭幕式的通知 学校定于10月24日（星期六）在南湖校区第一田径场，举行中国矿业大学第十七届大学生体育大会暨第十九届大学生体育文化节闭幕式。 南湖校区第一田径场 通知 信息公告">
+  <div class="rank">12</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="https://www.cumt.edu.cn/info/1128/71476.htm" target="_blank" rel="noopener noreferrer">关于召开中国矿业大学第十七届大学生体育大会暨第十九届大学生体育文化节闭幕式的通知</a></h2>
+    <div class="badges"><span class="tag info">通知</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月24日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">南湖校区第一田径场</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">学校定于10月24日（星期六）在南湖校区第一田径场，举行中国矿业大学第十七届大学生体育大会暨第十九届大学生体育文化节闭幕式。</p>
+    <ul class="points"><li>体育大会开幕式将在上午8点准时开始，体育文化节闭幕式将于下午4点30分进行，请校体育运动委员会成员单位派一名负责人参加开幕式和闭幕式，并在主席台就座。</li></ul>
+    <div class="foot">
+      <span class="src">信息公告</span>
+      <span>2026-10-19</span>
+      <a class="link" href="https://www.cumt.edu.cn/info/1128/71476.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c13" data-tags="科研 校务 国际" data-hot="0" data-text="中煤科工集团常州研究院有限公司党委书记、董事长田华一行来... 10月16日下午，中煤科工集团常州研究院有限公司党委书记、董事长田华一行来校交流。 常州 科研 校务 国际 要闻矿大">
+  <div class="rank">13</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1081/74014.htm" target="_blank" rel="noopener noreferrer">中煤科工集团常州研究院有限公司党委书记、董事长田华一行来...</a></h2>
+    <div class="badges"><span class="tag res">科研</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月16日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">常州</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月16日下午，中煤科工集团常州研究院有限公司党委书记、董事长田华一行来校交流。</p>
+    <ul class="points"><li>学校在行健楼B501会议室举行座谈会，校长张吉雄出席会议，副校长王忠宾主持会议。</li><li>他表示，校院双方长期在联合科研攻关、平台共建、研究生联合培养、成果转化、学生就业等方面密切协同，合作基础深厚。</li></ul>
+    <div class="foot">
+      <span class="src">要闻矿大</span>
+      <span>2026-10-17</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1081/74014.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c14" data-tags="科研 校务 国际" data-hot="0" data-text="校党委书记赵宏伟率团访问挪威科技大学 为深入拓展我校对北欧国家的国际交流与合作，10月12日至13日，校党委书记赵宏伟率团访问挪威科技大学，就两校人员互访、科研合作和学术交流等事宜，开展广泛深入的交流研讨，并与挪威科技大学校长托尔·格兰德共同签署国际合作备忘录。  科研 校务 国际 要闻矿大">
+  <div class="rank">14</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1081/74019.htm" target="_blank" rel="noopener noreferrer">校党委书记赵宏伟率团访问挪威科技大学</a></h2>
+    <div class="badges"><span class="tag res">科研</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月12日至13日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">为深入拓展我校对北欧国家的国际交流与合作，10月12日至13日，校党委书记赵宏伟率团访问挪威科技大学，就两校人员互访、科研合作和学术交流等事宜，开展广泛深入的交流研讨，并与挪威科技大学校长托尔·格兰德共同签署国际合作备忘录。</p>
+    <ul class="points"><li>中国矿业大学长期深耕能源资源安全与绿色低碳转型发展等领域，两校学科布局契合、发展愿景相通、合作空间广阔。</li><li>参访工学部地球科学学院和机械与工业工程学院有关实验室期间，双方围绕能源资源开发、智慧城市建设和高端装备等领域，就共建科研平台、学生联合培养、师资互访和举办国际学术活动等事项开展务实磋商，并达成多项合作意向。</li></ul>
+    <div class="foot">
+      <span class="src">要闻矿大</span>
+      <span>2026-10-18</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1081/74019.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c15" data-tags="校务" data-hot="0" data-text="学校为离退休教职工举行2026年集体祝寿会 10月15日上午，学校在文昌校区教工之家举行2026年重阳节集体祝寿会。 文昌校区教工之家、文昌校区 校务 要闻矿大">
+  <div class="rank">15</div>
+  <div class="main">
+    <div class="stars">★★★☆☆<span class="lv">较高</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1081/74004.htm" target="_blank" rel="noopener noreferrer">学校为离退休教职工举行2026年集体祝寿会</a></h2>
+    <div class="badges"><span class="tag gov">校务</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月15日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">文昌校区教工之家、文昌校区</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月15日上午，学校在文昌校区教工之家举行2026年重阳节集体祝寿会。</p>
+    <ul class="points"><li>金秋结硕果，人寿添花香。</li><li>他高度评价了老同志为学校建设发展作出的重要贡献，通报了今年以来学校在人才培养、学科建设、师资队伍、科技创新、开放融合、文化育人等方面取得的新进展，并介绍了学校在强化党建引领、聚焦精准服务、深耕文化养老、推动银发赋能等离退休工作中的开展情…</li></ul>
+    <div class="foot">
+      <span class="src">要闻矿大</span>
+      <span>2026-10-15</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1081/74004.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c16" data-tags="校务 国际" data-hot="0" data-text="山东理工大学党委书记于红波一行来校调研 10月13日上午，山东理工大学党委书记于红波一行来我校调研。 行健楼b503 校务 国际 要闻矿大">
+  <div class="rank">16</div>
+  <div class="main">
+    <div class="stars">★★☆☆☆<span class="lv">一般</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1081/73994.htm" target="_blank" rel="noopener noreferrer">山东理工大学党委书记于红波一行来校调研</a></h2>
+    <div class="badges"><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月13日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">行健楼B503</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月13日上午，山东理工大学党委书记于红波一行来我校调研。</p>
+    <ul class="points"><li>学校在行健楼B503举行座谈会，校长张吉雄出席会议。</li><li>他表示，两校合作基础扎实、潜力巨大，希望双方未来继续深化协作，进一步拓宽合作领域、做实合作载体，在学科共建、人才共育、产教融合等方面探索新路径，为助力教育强国建设、推进中国式现代化贡献更多智慧与力量。</li></ul>
+    <div class="foot">
+      <span class="src">要闻矿大</span>
+      <span>2026-10-13</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1081/73994.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c17" data-tags="校务 国际" data-hot="0" data-text="江苏省教育厅来我校开展驻徐高校教育综合改革试点项目推进情... 10月15日下午，江苏省教育厅在学校行健楼b101会议室召开专题会议，调研了解驻徐高校教育综合改革试点工作推进落实情况。 徐州 校务 国际 资讯矿大">
+  <div class="rank">17</div>
+  <div class="main">
+    <div class="stars">★★☆☆☆<span class="lv">一般</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1002/74007.htm" target="_blank" rel="noopener noreferrer">江苏省教育厅来我校开展驻徐高校教育综合改革试点项目推进情...</a></h2>
+    <div class="badges"><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月15日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">徐州</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月15日下午，江苏省教育厅在学校行健楼B101会议室召开专题会议，调研了解驻徐高校教育综合改革试点工作推进落实情况。</p>
+    <ul class="points"><li>会议由江苏省教育厅二级巡视员王兵主持，校党委副书记祁慧勇，党委常委、宣传部部长亓光出席会议。</li><li>王兵充分肯定了驻徐高校改革试点取得的阶段性成效，要求进一步压紧压实改革责任，聚焦人才双聘、评价机制等共性问题，总结提炼可复制推广的改革案例。</li></ul>
+    <div class="foot">
+      <span class="src">资讯矿大</span>
+      <span>2026-10-16</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1002/74007.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c18" data-tags="报名 通知 国际" data-hot="1" data-text="关于选拔本科生赴英国诺丁汉大学等10所境外高校参加2027年春季学期短期访学项目的联合通知 根据我校与境外友好合作院校相关合作协议及《中国矿业大学本科生境外访学奖学金项目管理办法》（中矿大〔2022〕45号），现组织开展2027年春季学期赴英国诺丁汉大学等10所境外高校本科生短期访学项目，有关报名选拔事项通知如下。  报名 通知 国际 教务部·学生">
+  <div class="rank">18</div>
+  <div class="main">
+    <div class="stars">★★☆☆☆<span class="lv">一般</span></div>
+    <h2><a href="https://international.cumt.edu.cn/a0/2b/c6289a696363/page.htm" target="_blank" rel="noopener noreferrer">关于选拔本科生赴英国诺丁汉大学等10所境外高校参加2027年春季学期短期访学项目的联合通知</a></h2>
+    <div class="badges"><span class="tag hot">报名</span><span class="tag info">通知</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v closed">2026年9月30日</span></div>
+    </div>
+    <p class="sum">根据我校与境外友好合作院校相关合作协议及《中国矿业大学本科生境外访学奖学金项目管理办法》（中矿大〔2022〕45号），现组织开展2027年春季学期赴英国诺丁汉大学等10所境外高校本科生短期访学项目，有关报名选拔事项通知如下。</p>
+    <ul class="points"><li>2. 学校将对报名学生进行综合评审，择优遴选“境外学习行健计划”奖学金项目的入选名单，并派遣至外方高校学习。</li><li>5.学生需按照规定的时间回校，继续在我校后续的学习，回校后一个月内，向国际合作交流处、所在学院提交国外学习总结及学习成绩单等材料，并做学习成果汇报。</li></ul>
+    <div class="foot">
+      <span class="src">教务部·学生</span>
+      <span>2026-09-23</span>
+      <a class="link" href="https://international.cumt.edu.cn/a0/2b/c6289a696363/page.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c19" data-tags="报名 通知" data-hot="1" data-text="关于申报2027、2028年修缮项目计划的通知 根据《中国矿业大学修缮、改造项目管理实施办法（修订）》及学校相关要求，现启动2028年中央高校改善基本办学条件专项资金项目（房屋修缮和基础设施改造类）及2027年校内修缮项目的计划申报工作，请各单位通过基建修缮管理系统申报本单位的修缮项目计划，申报时间为10月8日至11月8日。  报名 通知 信息公告">
+  <div class="rank">19</div>
+  <div class="main">
+    <div class="stars">★★☆☆☆<span class="lv">一般</span></div>
+    <h2><a href="https://jjc.cumt.edu.cn/info/1051/3975.htm" target="_blank" rel="noopener noreferrer">关于申报2027、2028年修缮项目计划的通知</a></h2>
+    <div class="badges"><span class="tag hot">报名</span><span class="tag info">通知</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月8日至11月8日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">根据《中国矿业大学修缮、改造项目管理实施办法（修订）》及学校相关要求，现启动2028年中央高校改善基本办学条件专项资金项目（房屋修缮和基础设施改造类）及2027年校内修缮项目的计划申报工作，请各单位通过基建修缮管理系统申报本单位的修缮项目计划，申报时间为10月8日至11月8日。</p>
+    <ul class="points"><li>登录方式及申报流程详见附件。</li></ul>
+    <div class="foot">
+      <span class="src">信息公告</span>
+      <span>2026-09-23</span>
+      <a class="link" href="https://jjc.cumt.edu.cn/info/1051/3975.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c20" data-tags="科研 校务 国际" data-hot="0" data-text="香港城市大学协理副校长李立帅一行来矿业工程学院交流 10月16日，香港城市大学协理副校长、数据科学系教授李立帅一行来我校交流访问，双方在矿业学院楼a509举行座谈交流会。 矿业学院楼a509、图书馆报告厅 科研 校务 国际 校园快讯">
+  <div class="rank">20</div>
+  <div class="main">
+    <div class="stars">★★☆☆☆<span class="lv">一般</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1003/74021.htm" target="_blank" rel="noopener noreferrer">香港城市大学协理副校长李立帅一行来矿业工程学院交流</a></h2>
+    <div class="badges"><span class="tag res">科研</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月16日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">矿业学院楼A509、图书馆报告厅</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月16日，香港城市大学协理副校长、数据科学系教授李立帅一行来我校交流访问，双方在矿业学院楼A509举行座谈交流会。</p>
+    <ul class="points"><li>他指出，当前煤炭行业智能化转型持续深化，深部资源开发和智慧矿山建设正在进入数据、机理和智能算法协同创新的新阶段，希望通过此次座谈交流，能够学习借鉴李立帅教授在跨学科团队建设与国际学术合作方面的宝贵经验，进一步助推矿业工程一流学科建设取得…</li><li>李立帅对学校的热情接待表示感谢，对矿业工程学院在推动传统矿业与先进感知、智能装备深度融合方面取得的“硬核”成果给予高度评价，并介绍了香港城市大学的学科特色与交叉创新成果，表示非常期待与我校开展务实合作，依托矿山一线数据与工程场景，围绕低…</li></ul>
+    <div class="foot">
+      <span class="src">校园快讯</span>
+      <span>2026-10-19</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1003/74021.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c21" data-tags="科研 校务 国际" data-hot="0" data-text="甘肃省临泽县县委书记张成琦一行来校调研交流 10月13日下午，甘肃省临泽县县委书记张成琦一行来校调研交流，学校在行健楼b203会议室举行座谈会，我校副校长秦波涛出席会议。  科研 校务 国际 资讯矿大">
+  <div class="rank">21</div>
+  <div class="main">
+    <div class="stars">★★☆☆☆<span class="lv">一般</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1002/74013.htm" target="_blank" rel="noopener noreferrer">甘肃省临泽县县委书记张成琦一行来校调研交流</a></h2>
+    <div class="badges"><span class="tag res">科研</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月13日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月13日下午，甘肃省临泽县县委书记张成琦一行来校调研交流，学校在行健楼B203会议室举行座谈会，我校副校长秦波涛出席会议。</p>
+    <ul class="points"><li>秦波涛代表学校对张成琦一行的到来表示热烈欢迎，并介绍了学校近年来在人才培养、学科建设、科研创新、校地合作等方面的发展成效。</li><li>他表示，中国矿业大学在无机非金属材料、储能材料、碳基新材料等方向积淀深厚，材料与物理学院在凹凸棒石纯化与吸附性能、凹凸棒石基功能复合材料等方面已有扎实研究基础，期待与临泽县深化对接，以科技创新为纽带，以产业合作为落脚点，共同推动凹凸棒石…</li></ul>
+    <div class="foot">
+      <span class="src">资讯矿大</span>
+      <span>2026-10-16</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1002/74013.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card hot" id="c22" data-tags="报名 通知 校务 国际" data-hot="1" data-text="关于进一步做好2026-2027学年秋季学期教学督导工作的通知 教学督导工作是学校加强教风学风建设，完善教学质量监控机制，提升教师教学水平与课堂教学质量的重要环节。  报名 通知 校务 国际 教务部通知">
+  <div class="rank">22</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="http://jwb.cumt.edu.cn/info/1105/8508.htm" target="_blank" rel="noopener noreferrer">关于进一步做好2026-2027学年秋季学期教学督导工作的通知</a></h2>
+    <div class="badges"><span class="tag hot">报名</span><span class="tag info">通知</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v closed">9月11日</span></div>
+    </div>
+    <p class="sum">教学督导工作是学校加强教风学风建设，完善教学质量监控机制，提升教师教学水平与课堂教学质量的重要环节。</p>
+    <ul class="points"><li>（五）各学院须结合本通知要求，制定本学院本学期教学督导工作方案，方案应明确督导人员、督导方式及次数、督导意见反馈方式等内容。</li><li>（六）本学期末各学院须向教务部提交教学督导工作总结，提交时间及方式另行通知。</li></ul>
+    <div class="foot">
+      <span class="src">教务部通知</span>
+      <span>2026-09-05</span>
+      <a class="link" href="http://jwb.cumt.edu.cn/info/1105/8508.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c23" data-tags="校务 国际" data-hot="0" data-text="校领导一行调研指导竹四学生社区 10月14日下午，校党委副书记李江涛一行到竹四学生社区调研指导，党委学生工作部部长闵涛、副部长关福远陪同调研。 社区 校务 国际 校园快讯">
+  <div class="rank">23</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="https://news.cumt.edu.cn/info/1003/74010.htm" target="_blank" rel="noopener noreferrer">校领导一行调研指导竹四学生社区</a></h2>
+    <div class="badges"><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v">2026年10月14日</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">社区</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">10月14日下午，校党委副书记李江涛一行到竹四学生社区调研指导，党委学生工作部部长闵涛、副部长关福远陪同调研。</p>
+    <ul class="points"><li>建筑与设计学院党委副书记卢宁，环境设计专业教师刘振宇，辅导员及参与社区改造的学生代表参加现场报告交流。</li><li>刘振宇介绍了环境设计专业《材料与构造营建》的课程开设情况，他指出该课程主要围绕木结构小型公共构筑物展开，重点培养学生材料认知、方案设计、节点构造、图纸表达和实体搭建等方面能力素养，并介绍了该课程前期立足南湖校园文化建设已落地的部分文化景…</li></ul>
+    <div class="foot">
+      <span class="src">校园快讯</span>
+      <span>2026-10-16</span>
+      <a class="link" href="https://news.cumt.edu.cn/info/1003/74010.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c24" data-tags="" data-hot="0" data-text="大模型时代，如何做一名“不可替代”的研究者 （正文以图片/表格为主，未见成段文字，请点开原文查看）   学术报告">
+  <div class="rank">24</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="https://www.cumt.edu.cn/info/1126/71439.htm" target="_blank" rel="noopener noreferrer">大模型时代，如何做一名“不可替代”的研究者</a></h2>
+    <div class="badges"></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">（正文以图片/表格为主，未见成段文字，请点开原文查看）</p>
+    
+    <div class="foot">
+      <span class="src">学术报告</span>
+      <span>2026-10-16</span>
+      <a class="link" href="https://www.cumt.edu.cn/info/1126/71439.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c25" data-tags="" data-hot="0" data-text="面向气候韧性的基于自然的解决方案:从生态系统监测到景观管理 （正文以图片/表格为主，未见成段文字，请点开原文查看）   学术报告">
+  <div class="rank">25</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="https://www.cumt.edu.cn/info/1126/71429.htm" target="_blank" rel="noopener noreferrer">面向气候韧性的基于自然的解决方案:从生态系统监测到景观管理</a></h2>
+    <div class="badges"></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">（正文以图片/表格为主，未见成段文字，请点开原文查看）</p>
+    
+    <div class="foot">
+      <span class="src">学术报告</span>
+      <span>2026-10-15</span>
+      <a class="link" href="https://www.cumt.edu.cn/info/1126/71429.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c26" data-tags="通知" data-hot="0" data-text="关于开展2026-2027学年秋季学期学校法律咨询日工作的通知 根据学校《关于规范和加强学校法律咨询服务工作的通知》（中矿大法务字〔2025〕2 号），现将2026-2027学年秋季学期学校法律咨询日工作有关安排予以通知。  通知 信息公告">
+  <div class="rank">26</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="https://www.cumt.edu.cn/info/1128/71392.htm" target="_blank" rel="noopener noreferrer">关于开展2026-2027学年秋季学期学校法律咨询日工作的通知</a></h2>
+    <div class="badges"><span class="tag info">通知</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">根据学校《关于规范和加强学校法律咨询服务工作的通知》（中矿大法务字〔2025〕2 号），现将2026-2027学年秋季学期学校法律咨询日工作有关安排予以通知。</p>
+    <ul class="points"><li>请有咨询需求的机关各部门、校内各单位和师生员工予以掌握，并根据实际情况，选择合适的周次前来咨询。</li></ul>
+    <div class="foot">
+      <span class="src">信息公告</span>
+      <span>2026-09-28</span>
+      <a class="link" href="https://www.cumt.edu.cn/info/1128/71392.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c27" data-tags="通知" data-hot="0" data-text="关于组织开展中国矿业大学“缅怀英烈守初心，勇担使命建新功”仪式思政课活动 的通知 为深入学习贯彻习近平新时代中国特色社会主义思想、党的二十大和二十届历次全会和学校第十五次党代会精神，在第十三个烈士纪念日即将到来之际，学校将举办“缅怀英烈守初心，勇担使命建新功”仪式思政课活动。  通知 信息公告">
+  <div class="rank">27</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="https://www.cumt.edu.cn/info/1128/71382.htm" target="_blank" rel="noopener noreferrer">关于组织开展中国矿业大学“缅怀英烈守初心，勇担使命建新功”仪式思政课活动 的通知</a></h2>
+    <div class="badges"><span class="tag info">通知</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">为深入学习贯彻习近平新时代中国特色社会主义思想、党的二十大和二十届历次全会和学校第十五次党代会精神，在第十三个烈士纪念日即将到来之际，学校将举办“缅怀英烈守初心，勇担使命建新功”仪式思政课活动。</p>
+    <ul class="points"><li>淮海战役烈士纪念塔管理中心领导，学校相关领导、相关部门负责人及二级单位党组织负责人，青年教师代表、大学生及附属中小学学生代表。</li><li>1.活动通知将通过学校协同办公系统发送至参会人员，请及时登录系统回复。</li></ul>
+    <div class="foot">
+      <span class="src">信息公告</span>
+      <span>2026-09-28</span>
+      <a class="link" href="https://www.cumt.edu.cn/info/1128/71382.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c28" data-tags="通知" data-hot="0" data-text="关于做好2026年中秋、国庆期间正风肃纪工作的通知 如果您无法在线浏览此 pdf 文件，则可以 下载免费小巧的 福昕(foxit) pdf 阅读器,安装后即可在线浏览 或 下载免费的 adobe reader pdf 阅读器,安装后即可在线浏览 或 下载此 pdf 文件  通知 信息公告">
+  <div class="rank">28</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="https://jw.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1030&amp;wbnewsid=2895" target="_blank" rel="noopener noreferrer">关于做好2026年中秋、国庆期间正风肃纪工作的通知</a></h2>
+    <div class="badges"><span class="tag info">通知</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">如果您无法在线浏览此 PDF 文件，则可以 下载免费小巧的 福昕(Foxit) PDF 阅读器,安装后即可在线浏览 或 下载免费的 Adobe Reader PDF 阅读器,安装后即可在线浏览 或 下载此 PDF 文件</p>
+    
+    <div class="foot">
+      <span class="src">信息公告</span>
+      <span>2026-09-24</span>
+      <a class="link" href="https://jw.cumt.edu.cn/content.jsp?urltype=news.NewsContentUrl&amp;wbtreeid=1030&amp;wbnewsid=2895" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c29" data-tags="" data-hot="0" data-text="教务部2026年中秋节、国庆节值班安排 值班开始时间 值班结束时间 值班地点 带班领导 值班人员 值班人员电话 2026/9/25 2026/9/25 行健楼a104 杨康 郭昌清 83590145 2026/9/26 2026/9/26 行健楼a104 杨康 郭昌清 83590145 2026/9/27 2026/9/27 行健楼a102 杨康 郎志军 8…   教务部通知">
+  <div class="rank">29</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="http://jwb.cumt.edu.cn/info/1105/8534.htm" target="_blank" rel="noopener noreferrer">教务部2026年中秋节、国庆节值班安排</a></h2>
+    <div class="badges"></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">值班开始时间 值班结束时间 值班地点 带班领导 值班人员 值班人员电话 2026/9/25 2026/9/25 行健楼A104 杨康 郭昌清 83590145 2026/9/26 2026/9/26 行健楼A104 杨康 郭昌清 83590145 2026/9/27 2026/9/27 行健楼A102 杨康 郎志军 8…</p>
+    
+    <div class="foot">
+      <span class="src">教务部通知</span>
+      <span>2026-09-23</span>
+      <a class="link" href="http://jwb.cumt.edu.cn/info/1105/8534.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article><article class="card" id="c30" data-tags="讲座 科研 校务 国际" data-hot="0" data-text="【镜湖大讲堂】2026年镜湖大讲堂系列讲座之九（总 第406期）——面向寻常巷陌的人间烟火：探索超大城市基层治理现代化的路径和方法 讲座主题：2026年镜湖大讲堂系列讲座之九（总 第406期）——面向寻常巷陌的人间烟火：探索超大城市基层治理现代化的路径和方法 上海 讲座 科研 校务 国际 人文讲堂">
+  <div class="rank">30</div>
+  <div class="main">
+    <div class="stars">★☆☆☆☆<span class="lv">提示</span></div>
+    <h2><a href="https://www.cumt.edu.cn/info/1127/71415.htm" target="_blank" rel="noopener noreferrer">【镜湖大讲堂】2026年镜湖大讲堂系列讲座之九（总 第406期）——面向寻常巷陌的人间烟火：探索超大城市基层治理现代化的路径和方法</a></h2>
+    <div class="badges"><span class="tag talk">讲座</span><span class="tag res">科研</span><span class="tag gov">校务</span><span class="tag intl">国际</span></div>
+    <div class="meta">
+      <div class="m"><span class="k">时间</span><span class="v none">未注明</span></div>
+      <div class="m"><span class="k">地点</span><span class="v">上海</span></div>
+      <div class="m"><span class="k">截止</span><span class="v none">原文未写明</span></div>
+    </div>
+    <p class="sum">讲座主题：2026年镜湖大讲堂系列讲座之九（总 第406期）——面向寻常巷陌的人间烟火：探索超大城市基层治理现代化的路径和方法</p>
+    <ul class="points"><li>韩志明，教授，博士研究生导师，上海交通大学国际与公共事务学院、中国城市治理研究院教授，社会治理创新研究中心主任。</li><li>个人研究主要致力于探究大国治理的普遍规律、城市治理的特色经验和社会治理的底层逻辑等。</li></ul>
+    <div class="foot">
+      <span class="src">人文讲堂</span>
+      <span>2026-10-12</span>
+      <a class="link" href="https://www.cumt.edu.cn/info/1127/71415.htm" target="_blank" rel="noopener noreferrer">原文 ↗</a>
+    </div>
+  </div>
+</article>
+</div>
+<div id="nothing" class="empty hidden">没有匹配的资讯，换个关键词试试。</div>
+
+<footer>
+  <b>数据来源</b>：中国矿业大学官网（www.cumt.edu.cn）、新闻网、教务部 —— 公开页面，低频礼貌抓取。<br>
+  <b>说明</b>：时间 / 地点 / 截止日期由正文自动抽取，原文没写的会标「未注明」，一律以原文链接为准。<br>
+  本站只在本地运行，不采集任何个人信息。
+</footer>
+</div>
+<script nonce="HXo_1Vlc6OPHPhqG">
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var chips = [].slice.call(document.querySelectorAll('.chip'));
+  var input = document.getElementById('q');
+  var none = document.getElementById('nothing');
+  var cur = 'all', q = '';
+
+  function matchTag(c){
+    if(cur === 'all') return true;
+    if(cur === 'focus') return c.getAttribute('data-hot') === '1';
+    return (' ' + c.getAttribute('data-tags') + ' ').indexOf(' ' + cur + ' ') >= 0;
+  }
+  function apply(){
+    var shown = 0;
+    cards.forEach(function(c){
+      var ok = matchTag(c) && (!q || c.getAttribute('data-text').indexOf(q) >= 0);
+      c.classList.toggle('hidden', !ok);
+      if(ok) shown++;
+    });
+    if(none) none.classList.toggle('hidden', shown > 0);
+  }
+  chips.forEach(function(b){
+    b.addEventListener('click', function(){
+      chips.forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      cur = b.getAttribute('data-tag');
+      apply();
+    });
+  });
+  if(input){
+    input.addEventListener('input', function(){
+      q = input.value.trim().toLowerCase();
+      apply();
+    });
+  }
+  cards.forEach(function(c){
+    var s = c.querySelector('.sum');
+    if(!s) return;
+    s.addEventListener('click', function(){ c.classList.toggle('open'); });
+  });
+  document.querySelectorAll('.alert-card').forEach(function(a){
+    a.addEventListener('click', function(){
+      var t = document.getElementById(a.getAttribute('data-goto'));
+      if(t){ t.scrollIntoView({behavior:'smooth', block:'center'}); t.classList.add('open'); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
