@@ -114,6 +114,8 @@ footer{margin:34px 0 0;padding-top:16px;border-top:1px solid var(--line);
   color:var(--mut2);font-size:12px;line-height:1.8}
 footer b{color:var(--mut)}
 .hidden{display:none !important}
+#ago{font-style:normal;margin-left:6px;color:var(--mut2)}
+#ago.old{color:#d9a441}
 @media(min-width:660px){
   .meta{grid-template-columns:1fr 1fr;column-gap:18px}
   .card{padding:18px;gap:16px}
@@ -132,7 +134,7 @@ footer b{color:var(--mut)}
     <span><b>30</b> 条资讯</span>
     <span class="h"><b>10</b> 条竞赛 / 报名</span>
     <span class="u"><b>2</b> 条报名临近</span>
-    <span>更新 <b>2026-10-20 10:03</b></span>
+    <span>更新 <b id="stamp" data-at="2026-10-20 10:03">2026-10-20 10:03</b><em id="ago"></em></span>
   </div>
   <div class="search">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
@@ -729,13 +731,33 @@ footer b{color:var(--mut)}
   本站只在本地运行，不采集任何个人信息。
 </footer>
 </div>
-<script nonce="0tKGGHtYSO3ibXor">
+<script nonce="JhePic7nss2zjAAW">
 (function(){
   var cards = [].slice.call(document.querySelectorAll('.card'));
   var chips = [].slice.call(document.querySelectorAll('.chip'));
   var input = document.getElementById('q');
   var none = document.getElementById('nothing');
   var cur = 'all', q = '';
+
+  // 页头「更新 10:03」后面补一个「· 12 分钟前」，一眼看出数据新不新
+  (function(){
+    var el = document.getElementById('stamp'), ago = document.getElementById('ago');
+    if(!el || !ago) return;
+    function tick(){
+      var t = Date.parse((el.getAttribute('data-at') || '').replace(/-/g, '/'));
+      if(!t) return;
+      var m = Math.round((Date.now() - t) / 60000);
+      if(m < 0) m = 0;
+      var s = m < 1 ? '刚刚'
+            : m < 60 ? (m + ' 分钟前')
+            : m < 1440 ? (Math.floor(m / 60) + ' 小时前')
+            : (Math.floor(m / 1440) + ' 天前');
+      ago.textContent = '· ' + s;
+      ago.className = m > 180 ? 'old' : '';
+    }
+    tick();
+    setInterval(tick, 30000);
+  })();
 
   function matchTag(c){
     if(cur === 'all') return true;
